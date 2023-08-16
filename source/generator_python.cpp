@@ -74,6 +74,8 @@ import sys
 import time
 import uuid
 
+from . import fbe
+
 
 class DefaultEnumMeta(enum.EnumMeta):
     default = object()
