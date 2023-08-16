@@ -74,8 +74,6 @@ import sys
 import time
 import uuid
 
-from . import fbe
-
 
 class DefaultEnumMeta(enum.EnumMeta):
     default = object()
@@ -2767,7 +2765,7 @@ void GeneratorPython::GenerateImports(const std::shared_ptr<Package>& p)
 
     // Generate FBE import
     WriteLine();
-    WriteLineIndent("import fbe");
+    WriteLineIndent("from . import fbe");
 
     // Generate packages import
     if (p->import)
