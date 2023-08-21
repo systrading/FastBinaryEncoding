@@ -1,3 +1,4 @@
+add_definitions(-include stdint.h)
 cmake_minimum_required(VERSION 3.20)
 
 # Global properties
