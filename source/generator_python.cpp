@@ -2455,7 +2455,7 @@ class Sender(object):
     # Send serialized buffer.
     # Direct call of the method requires knowledge about internals of FBE models serialization.
     # Use it with care!
-    def send_serialized(self, serialized):
+    async def send_serialized(self, serialized):
         assert (serialized > 0), "Invalid size of the serialized buffer!"
         if serialized <= 0:
             return 0
@@ -2464,12 +2464,12 @@ class Sender(object):
         self._buffer.shift(serialized)
 
         # Send the value
-        sent = self.on_send(self._buffer.buffer, 0, self._buffer.size)
+        sent = await self.on_send(self._buffer.buffer, 0, self._buffer.size)
         self._buffer.remove(0, sent)
         return sent
 
     # Send message handler
-    def on_send(self, buffer, offset, size):
+    async def on_send(self, buffer, offset, size):
         raise NotImplementedError("Abstract method call!")
 
     # Send log message handler
@@ -4739,7 +4739,7 @@ void GeneratorPython::GenerateSender(const std::shared_ptr<Package>& p, bool fin
     WriteLine();
     WriteLineIndent("# Send methods");
     WriteLine();
-    WriteLineIndent("def send(self, value):");
+    WriteLineIndent("async def send(self, value):");
     Indent(1);
     if (p->body)
     {
@@ -4749,7 +4749,7 @@ void GeneratorPython::GenerateSender(const std::shared_ptr<Package>& p, bool fin
             {
                 WriteLineIndent("if isinstance(value, " + *s->name + ") and (value.fbe_type == self." + CppCommon::StringUtils::ToLower(*s->name) + "_model.fbe_type):");
                 Indent(1);
-                WriteLineIndent("return self.send_" + CppCommon::StringUtils::ToLower(*s->name) + "(value)");
+                WriteLineIndent("return await self.send_" + CppCommon::StringUtils::ToLower(*s->name) + "(value)");
                 Indent(-1);
             }
         }
@@ -4774,7 +4774,7 @@ void GeneratorPython::GenerateSender(const std::shared_ptr<Package>& p, bool fin
             if (s->message)
             {
                 WriteLine();
-                WriteLineIndent("def send_" + CppCommon::StringUtils::ToLower(*s->name) + "(self, value):");
+                WriteLineIndent("async def send_" + CppCommon::StringUtils::ToLower(*s->name) + "(self, value):");
                 Indent(1);
                 WriteLineIndent("# Serialize the value into the FBE stream");
                 WriteLineIndent("serialized = self." + CppCommon::StringUtils::ToLower(*s->name) + "_model.serialize(value)");
@@ -4789,7 +4789,7 @@ void GeneratorPython::GenerateSender(const std::shared_ptr<Package>& p, bool fin
                 Indent(-1);
                 WriteLine();
                 WriteLineIndent("# Send the serialized value");
-                WriteLineIndent("return self.send_serialized(serialized)");
+                WriteLineIndent("return await self.send_serialized(serialized)");
                 Indent(-1);
             }
         }
@@ -4798,7 +4798,7 @@ void GeneratorPython::GenerateSender(const std::shared_ptr<Package>& p, bool fin
     // Generate sender message handler
     WriteLine();
     WriteLineIndent("# Send message handler");
-    WriteLineIndent("def on_send(self, buffer, offset, size):");
+    WriteLineIndent("async def on_send(self, buffer, offset, size):");
     Indent(1);
     WriteLineIndent("raise NotImplementedError(\"" + *p->name + ".Sender.on_send() not implemented!\")");
     Indent(-1);
