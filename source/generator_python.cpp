@@ -2523,7 +2523,7 @@ class Receiver(object):
         self._buffer.reset()
 
     # Receive data
-    def receive(self, buffer, offset=0, size=None):
+    async def receive(self, buffer, offset=0, size=None):
         assert (buffer is not None), "Invalid buffer!"
         if buffer is None:
             raise ValueError("Invalid buffer!")
@@ -2714,7 +2714,7 @@ class Receiver(object):
                 fbe_struct_type = Receiver.read_uint32(message_buffer, message_offset + fbe_struct_offset + 4)
 
             # Handle the message
-            self.on_receive(fbe_struct_type, message_buffer, message_offset, message_size)
+            await self.on_receive(fbe_struct_type, message_buffer, message_offset, message_size)
 
             # Reset the storage buffer
             self._buffer.reset()
@@ -4905,7 +4905,7 @@ void GeneratorPython::GenerateReceiver(const std::shared_ptr<Package>& p, bool f
             if (s->message)
             {
                 WriteLine();
-                WriteLineIndent("def on_receive_" + CppCommon::StringUtils::ToLower(*s->name) + "(self, value):");
+                WriteLineIndent("async def on_receive_" + CppCommon::StringUtils::ToLower(*s->name) + "(self, value):");
                 Indent(1);
                 WriteLineIndent("pass");
                 Indent(-1);
@@ -4915,7 +4915,7 @@ void GeneratorPython::GenerateReceiver(const std::shared_ptr<Package>& p, bool f
     }
 
     // Generate receiver message handler
-    WriteLineIndent("def on_receive(self, type, buffer, offset, size):");
+    WriteLineIndent("async def on_receive(self, type, buffer, offset, size):");
     Indent(1);
     if (p->body)
     {
@@ -4940,7 +4940,7 @@ void GeneratorPython::GenerateReceiver(const std::shared_ptr<Package>& p, bool f
                 Indent(-1);
                 WriteLine();
                 WriteLineIndent("# Call receive handler with deserialized value");
-                WriteLineIndent("self.on_receive_" + CppCommon::StringUtils::ToLower(*s->name) + "(self._" + CppCommon::StringUtils::ToLower(*s->name) + "_value)");
+                WriteLineIndent("await self.on_receive_" + CppCommon::StringUtils::ToLower(*s->name) + "(self._" + CppCommon::StringUtils::ToLower(*s->name) + "_value)");
                 WriteLineIndent("return True");
                 Indent(-1);
             }
