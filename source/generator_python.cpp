@@ -3610,8 +3610,7 @@ void GeneratorPython::GenerateStruct(const std::shared_ptr<StructType>& s)
             WriteLineIndent("result.update(super().__to_json__())");
         if (s->body)
         {
-            WriteLineIndent("result['" + *s->name + "'] = {}");
-            WriteLineIndent("result['" + *s->name + "'].update(dict(");
+            WriteLineIndent("result.update(dict(");
             Indent(1);
             for (const auto& field : s->body->fields)
             {
@@ -4937,8 +4936,8 @@ void GeneratorPython::GenerateReceiver(const std::shared_ptr<Package>& p, bool f
                 WriteLineIndent("if self.logging:");
                 Indent(1);
                 // WriteLineIndent("message = str(self._" + CppCommon::StringUtils::ToLower(*s->name) + "_value)");
-                WriteLineIndent("message = self._" + CppCommon::StringUtils::ToLower(*s->name) + "_value.to_json()");
-                WriteLineIndent("self.on_receive_log(message)");
+                // WriteLineIndent("message = self._" + CppCommon::StringUtils::ToLower(*s->name) + "_value.to_json()");
+                WriteLineIndent("self.on_receive_log(self._" + CppCommon::StringUtils::ToLower(*s->name) + "_value)");
                 Indent(-1);
                 WriteLine();
                 WriteLineIndent("# Call receive handler with deserialized value");
