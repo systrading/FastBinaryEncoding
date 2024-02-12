@@ -4935,7 +4935,8 @@ void GeneratorPython::GenerateReceiver(const std::shared_ptr<Package>& p, bool f
                 WriteLineIndent("# Log the value");
                 WriteLineIndent("if self.logging:");
                 Indent(1);
-                WriteLineIndent("message = str(self._" + CppCommon::StringUtils::ToLower(*s->name) + "_value)");
+                // WriteLineIndent("message = str(self._" + CppCommon::StringUtils::ToLower(*s->name) + "_value)");
+                WriteLineIndent("message = self._" + CppCommon::StringUtils::ToLower(*s->name) + "_value.to_json()");
                 WriteLineIndent("self.on_receive_log(message)");
                 Indent(-1);
                 WriteLine();
