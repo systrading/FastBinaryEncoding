@@ -3610,8 +3610,8 @@ void GeneratorPython::GenerateStruct(const std::shared_ptr<StructType>& s)
             WriteLineIndent("result.update(super().__to_json__())");
         if (s->body)
         {
-            WriteLineIndent("result[" + '"'+ *s->name + '"' + "] = {}");
-            WriteLineIndent("result[" + '"'+ *s->name + '"' + "].update(dict(");
+            WriteLineIndent("result['" + *s->name + "'] = {}");
+            WriteLineIndent("result['" + *s->name + "'].update(dict(");
             Indent(1);
             for (const auto& field : s->body->fields)
             {
